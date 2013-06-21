@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		5884D0D81724223900F98F43 /* cardBack.png in Resources */ = {isa = PBXBuildFile; fileRef = 5884D0D71724223900F98F43 /* cardBack.png */; };
+		58BB3D001764ED6900DC086B /* GameResultViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58BB3CFF1764ED6900DC086B /* GameResultViewController.m */; };
+		58BB3D031764EF1800DC086B /* GameResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 58BB3D021764EF1800DC086B /* GameResult.m */; };
 		58C1514F1703B32E00CB9D4C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58C1514E1703B32E00CB9D4C /* UIKit.framework */; };
 		58C151511703B32E00CB9D4C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58C151501703B32E00CB9D4C /* Foundation.framework */; };
 		58C151531703B32E00CB9D4C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58C151521703B32E00CB9D4C /* CoreGraphics.framework */; };
@@ -28,6 +30,10 @@
 
 /* Begin PBXFileReference section */
 		5884D0D71724223900F98F43 /* cardBack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardBack.png; sourceTree = "<group>"; };
+		58BB3CFE1764ED6900DC086B /* GameResultViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameResultViewController.h; sourceTree = "<group>"; };
+		58BB3CFF1764ED6900DC086B /* GameResultViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameResultViewController.m; sourceTree = "<group>"; };
+		58BB3D011764EF1800DC086B /* GameResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameResult.h; sourceTree = "<group>"; };
+		58BB3D021764EF1800DC086B /* GameResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameResult.m; sourceTree = "<group>"; };
 		58C1514B1703B32E00CB9D4C /* Matchismo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Matchismo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		58C1514E1703B32E00CB9D4C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		58C151501703B32E00CB9D4C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -102,6 +108,10 @@
 			isa = PBXGroup;
 			children = (
 				58C151661703B32E00CB9D4C /* MainStoryboard.storyboard */,
+				58BB3D011764EF1800DC086B /* GameResult.h */,
+				58BB3D021764EF1800DC086B /* GameResult.m */,
+				58BB3CFE1764ED6900DC086B /* GameResultViewController.h */,
+				58BB3CFF1764ED6900DC086B /* GameResultViewController.m */,
 				58C151691703B32E00CB9D4C /* CardGameViewController.h */,
 				58C1516A1703B32E00CB9D4C /* CardGameViewController.m */,
 				58C151551703B32E00CB9D4C /* Supporting Files */,
@@ -219,6 +229,8 @@
 				58C1517B1703B38700CB9D4C /* Deck.m in Sources */,
 				58C1517C1703B38700CB9D4C /* Card.m in Sources */,
 				58CF297C1709B0B300FB888A /* CardMatchingGame.m in Sources */,
+				58BB3D001764ED6900DC086B /* GameResultViewController.m in Sources */,
+				58BB3D031764EF1800DC086B /* GameResult.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
