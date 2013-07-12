@@ -12,11 +12,13 @@
 
 + (NSArray *) allGameResults;
 
+@property (strong, nonatomic) NSString *gameType;
 @property (readonly, nonatomic) NSDate *start;
 @property (readonly, nonatomic) NSDate *end;
 @property (readonly, nonatomic) NSTimeInterval duration;
 @property (nonatomic) int score;
 
+- (NSComparisonResult)compareGameType:(GameResult *)aGameResult;
 - (NSComparisonResult)compareDate:(GameResult *)aGameResult;
 - (NSComparisonResult)compareScore:(GameResult *)aGameResult;
 - (NSComparisonResult)compareDuration:(GameResult *)aGameResult;

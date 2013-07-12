@@ -8,76 +8,34 @@
 
 #import "CardGameViewController.h"
 #import "PlayingCardDeck.h"
-#import "CardMatchingGame.h"
-#import "GameResult.h"
 
 @interface CardGameViewController ()
 
-@property (weak, nonatomic) IBOutlet UILabel *flipsLabel;
-@property (nonatomic) int flipCount;
-@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
-@property (strong, nonatomic) CardMatchingGame *game;
-@property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
-@property (weak, nonatomic) IBOutlet UILabel *gameStatusLabel;
-@property (strong, nonatomic) GameResult *gameResult;
 @end
 
 @implementation CardGameViewController
 
 @synthesize game = _game;
-
-#define NO_GAME_MODE -1
-#define TWO_CARD_MATCH_MODE 2
-#define THREE_CARD_MATCH_MODE 3
+@synthesize gameResult = _gameResult;
 
 - (CardMatchingGame *)game {
     if(!_game) {
         _game = [[CardMatchingGame alloc] initWithCardCount:[self.cardButtons count]
-                                                  usingDeck:[[PlayingCardDeck alloc] init]
-                                                andGameMode:TWO_CARD_MATCH_MODE];
+                                                  usingDeck:[[PlayingCardDeck alloc] init]];
+        _game.matchBonus = self.gameSettings.matchBonus;
+        _game.mismatchPenalty = self.gameSettings.mismatchPenalty;
+        _game.flipCost = self.gameSettings.flipCost;
+        
+        _game.numberOfMatchingCards = 2;
     }
     return _game;
 }
 
-- (void) setGame:(CardMatchingGame *)game {
-    _game = game;
-}
-
-- (GameResult *) gameResult {
-    if (!_gameResult) {
-        _gameResult = [[GameResult alloc] init];
-    }
+- (GameResult *)gameResult
+{
+    if (!_gameResult) _gameResult = [[GameResult alloc] init];
+    _gameResult.gameType = @"Card Matching";
     return _gameResult;
-}
-
-- (void)setFlipCount:(int)flipCount {
-    _flipCount = flipCount;
-    self.flipsLabel.text = [NSString stringWithFormat:@"Flips: %d", self.flipCount];
-}
-
-- (void)setCardButtons:(NSArray *)cardButtons {
-    _cardButtons = cardButtons;
-    [self updateUI];
-}
-
-- (void) reset {
-    [self.game reset];
-    self.game = nil;
-    self.gameResult = nil;
-    self.flipCount = 0; // reset flipCount
-    self.gameStatusLabel.text = [NSString stringWithFormat:@"Select a game mode to begin"];
-    [self updateUI];
-}
-
-- (IBAction)dealCards:(UIButton *)sender {
-    [self reset];
-}
-
-- (IBAction)flipCard:(UIButton *)sender {
-    [self.game flipCardAtIndex:[self.cardButtons indexOfObject:sender]];
-    self.flipCount++;
-    [self updateUI];
-    self.gameResult.score = self.game.score;
 }
 
 - (void)updateUI {
@@ -96,10 +54,8 @@
         }
         
     }
-    if (self.game.matchStatus) {
-        self.gameStatusLabel.text = self.game.matchStatus;
-    }
-    self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
+    
+    [super updateUI];
 }
 
 @end

@@ -44,7 +44,8 @@
 - (void) updateUI {
     NSString *displayText = @"";
     for (GameResult *result in self.allGameResults) {
-        displayText = [displayText stringByAppendingFormat:@"Score: %d, (%@, %gs)\n",
+        displayText = [displayText stringByAppendingFormat:@"%@: %d, (%@, %gs)\n",
+                       result.gameType ? result.gameType : @"Card Matching",
                        result.score,
                        [NSDateFormatter localizedStringFromDate:result.end
                                                       dateStyle:NSDateFormatterShortStyle
@@ -52,6 +53,10 @@
                        round(result.duration)];
     }
     self.display.text = displayText;
+}
+- (IBAction)sortByGameType {
+    self.allGameResults = [self.allGameResults sortedArrayUsingSelector:@selector(compareGameType:)];
+    [self updateUI];
 }
 
 - (IBAction)sortByDate {
@@ -62,13 +67,11 @@
 - (IBAction)sortByScore {
     self.allGameResults = [self.allGameResults sortedArrayUsingSelector:@selector(compareScore:)];
     [self updateUI];
-
 }
 
 - (IBAction)sortByDuration {
     self.allGameResults = [self.allGameResults sortedArrayUsingSelector:@selector(compareDuration:)];
     [self updateUI];
-
 }
 
 @end

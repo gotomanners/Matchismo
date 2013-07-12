@@ -12,14 +12,18 @@
 
 @interface CardMatchingGame : NSObject
 
-@property (nonatomic) NSUInteger gameMode;
+@property (nonatomic) int numberOfMatchingCards;
 @property(readonly, nonatomic) int score;
 @property(nonatomic) NSString* matchStatus;
+@property(readonly, nonatomic) NSMutableArray* matchStatusData;
+
+@property (nonatomic) int matchBonus;
+@property (nonatomic) int mismatchPenalty;
+@property (nonatomic) int flipCost;
 
 // designated initializer
 - (id) initWithCardCount:(NSUInteger)count
-               usingDeck:(Deck *)deck
-             andGameMode:(NSUInteger)mode;
+               usingDeck:(Deck *)deck;
 
 - (void) flipCardAtIndex:(NSUInteger)index;
 - (Card *) cardAtIndex:(NSUInteger)index;

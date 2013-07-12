@@ -10,26 +10,40 @@
 
 @interface CardMatchingGame()
 @property (readwrite, nonatomic) int score;
+@property(readwrite, nonatomic) NSMutableArray* matchStatusData; // store match status data in array and pass it to controller
 @property (strong, nonatomic) NSMutableArray *cards; // of Card
 @property (strong, nonatomic) NSMutableArray *cardsToMatchAgainst; // of Card
 @end
 
 @implementation CardMatchingGame
 
-// Game modes
-#define NO_GAME_MODE -1
-#define TWO_CARD_MATCH_MODE 2
-#define THREE_CARD_MATCH_MODE 3
-
-// Game scoring
-#define MATCH_BONUS 4
-#define MISMATCH_PENALTY 2
-#define FLIP_COST 1
+@synthesize numberOfMatchingCards = _numberOfMatchingCards;
 
 - (void) reset {
     self.score = 0;
     self.cards = nil;
     self.cardsToMatchAgainst = nil;
+}
+
+- (int)matchBonus {
+    if (!_matchBonus < 0) {
+        _matchBonus = 4;
+    }
+    return _matchBonus;
+}
+
+- (int)mismatchPenalty {
+    if (!_mismatchPenalty < 0) {
+        _mismatchPenalty = 2;
+    }
+    return _mismatchPenalty;
+}
+
+- (int)flipCost {
+    if (!_flipCost < 0) {
+        _flipCost = 1;
+    }
+    return _flipCost;
 }
 
 - (NSMutableArray *) cards {
@@ -46,22 +60,18 @@
     return _cardsToMatchAgainst;
 }
 
-- (void) setGameMode:(NSUInteger)gameMode {
-    if (gameMode == TWO_CARD_MATCH_MODE || gameMode == THREE_CARD_MATCH_MODE) {
-        _gameMode = gameMode;
-        for (Card *card in self.cards) { // enable cards for gameplay
-            card.unplayable = NO;
-        }
+- (void) setNumberOfMatchingCards:(int)numberOfMatchingCards {
+    
+    if (numberOfMatchingCards < 2) {
+        _numberOfMatchingCards = 2;
+    } else if (numberOfMatchingCards > 3) {
+        _numberOfMatchingCards = 3;
     } else {
-        _gameMode = NO_GAME_MODE;
-        for (Card *card in self.cards) { // disable cards for gameplay
-            card.unplayable = YES;
-        }
+        _numberOfMatchingCards = numberOfMatchingCards;
     }
 }
 
-- (id) initWithCardCount:(NSUInteger)count usingDeck:(Deck *)deck andGameMode:(NSUInteger)mode {
-    
+- (id) initWithCardCount:(NSUInteger)count usingDeck:(Deck *)deck {
     self = [super init];
     
     if(self) {
@@ -70,11 +80,12 @@
             if(!card) {
                 self = nil;
             } else {
-                card.unplayable = YES; // disable cards for game mode selection
                 self.cards[i] = card;
             }
         }
-        self.gameMode = mode;
+        _matchBonus = -1;
+        _mismatchPenalty = -1;
+        _flipCost = -1;
     }
     
     return self;
@@ -86,7 +97,7 @@
     
     if(card && !card.isUnplayable) { //playable
         if(!card.isFaceUp) {
-            self.score -= FLIP_COST;
+            self.score -= self.flipCost;
             [self.cardsToMatchAgainst addObject:card];
             NSString *matches = @"";
             self.matchStatus = [NSString stringWithFormat:@"Flipped up %@", card.contents];
@@ -94,14 +105,14 @@
                 if(otherCard.isFaceUp && !otherCard.isUnplayable) { //faceUp & playable
                     [self.cardsToMatchAgainst addObject:otherCard];
                     
-                    if ([self.cardsToMatchAgainst count] == self.gameMode) {
+                    if ([self.cardsToMatchAgainst count] == self.numberOfMatchingCards) {
                         int matchScore = [card match:self.cardsToMatchAgainst];
                         if (matchScore) {
                             for (Card *matchedCard in self.cardsToMatchAgainst) {
                                 matchedCard.unplayable = YES;
                             }
                             
-                            int calculatedScore = matchScore * MATCH_BONUS;
+                            int calculatedScore = matchScore * self.matchBonus;
                             self.score += calculatedScore;
                             matches =[self.cardsToMatchAgainst componentsJoinedByString:@" & "];
                             self.matchStatus = [NSString stringWithFormat:@"Matched %@ for %d points", matches, calculatedScore];
@@ -111,8 +122,8 @@
                             }
                             
                             matches =[self.cardsToMatchAgainst componentsJoinedByString:@" & "];
-                            self.score -= MISMATCH_PENALTY;
-                            self.matchStatus = [NSString stringWithFormat:@"%@ don't match! %d point penalty!", matches, MISMATCH_PENALTY];
+                            self.score -= self.mismatchPenalty;
+                            self.matchStatus = [NSString stringWithFormat:@"%@ don't match! %d point penalty!", matches, self.mismatchPenalty];
                         }
                         break;
                     }

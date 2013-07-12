@@ -15,7 +15,8 @@
 
 @implementation GameResult
 
-#define ALL_RESULTS_KEY @"GsameResults_All"
+#define GAME_KEY @"Game"
+#define ALL_RESULTS_KEY @"GameResults_All"
 #define START_KEY @"StartDate"
 #define END_KEY @"EndDate"
 #define SCORE_KEY @"Score"
@@ -35,6 +36,7 @@
     self = [self init];
     if ([plist isKindOfClass:[NSDictionary class]]) {
         NSDictionary *resultDictionary = (NSDictionary *) plist;
+        _gameType = resultDictionary[GAME_KEY];
         _start = resultDictionary[START_KEY];
         _end = resultDictionary[END_KEY];
         _score = [resultDictionary[SCORE_KEY] intValue] ;
@@ -57,7 +59,11 @@
 }
 
 - (id) asPropertyList {
-    return @{ START_KEY: self.start, END_KEY: self.end, SCORE_KEY: @(self.score)};
+    return @{ START_KEY: self.start,
+              END_KEY: self.end,
+              SCORE_KEY: @(self.score),
+              GAME_KEY : self.gameType
+            };
 }
 
 // designated initializer
@@ -78,6 +84,10 @@
     _score = score;
     self.end = [NSDate date];
     [self synchronize];
+}
+
+- (NSComparisonResult)compareGameType:(GameResult *)aGameResult {
+    return ([self.gameType compare:aGameResult.gameType]);
 }
 
 - (NSComparisonResult)compareDate:(GameResult *)aGameResult {
