@@ -21,11 +21,17 @@
 @property (nonatomic) int mismatchPenalty;
 @property (nonatomic) int flipCost;
 
+@property (nonatomic) BOOL deckIsEmpty;
+@property (nonatomic, readonly) int numberOfCardsInGame;
+
 // designated initializer
 - (id) initWithCardCount:(NSUInteger)count
                usingDeck:(Deck *)deck;
 
-- (void) flipCardAtIndex:(NSUInteger)index;
+- (BOOL) flipCardAtIndex:(NSUInteger)index;
 - (Card *) cardAtIndex:(NSUInteger)index;
 - (void) reset;
+- (BOOL) drawExtraCards:(NSInteger)numberOfCardsNeeded;
+- (void)removeCardAtIndex:(NSUInteger)index;
+//- (NSMutableArray *) removeMatchedCardsFromGame;
 @end

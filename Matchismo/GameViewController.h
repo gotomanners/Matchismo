@@ -11,23 +11,30 @@
 #import "CardMatchingGame.h"
 #import "GameSettings.h"
 
-#define NO_GAME_MODE -1
-#define TWO_CARD_MATCH_MODE 2
-#define THREE_CARD_MATCH_MODE 3
-
 @interface GameViewController : UIViewController
 
 @property (strong, nonatomic) CardMatchingGame *game;
 @property (nonatomic) int flipCount;
 @property (weak, nonatomic) IBOutlet UILabel *flipsLabel;
-@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UILabel *gameStatusLabel;
+@property (weak, nonatomic) IBOutlet UICollectionView *cardCollectionView;
+@property (weak, nonatomic) IBOutlet UIButton *addCardsButton;
 @property (strong, nonatomic) GameResult *gameResult;
 @property (strong, nonatomic) GameSettings *gameSettings;
+@property (nonatomic) BOOL removeUnplayableCards;
 
-- (void)updateUI;
-
-- (IBAction)flipCard:(UIButton *)sender;
+- (IBAction)flipCard:(UITapGestureRecognizer *)gesture;
 - (IBAction)dealCards:(UIButton *)sender;
+- (IBAction)dealExtraCards:(UIButton *)sender;
+
+//abstract
+@property (nonatomic) NSUInteger startingCardCount;
+@property (strong, nonatomic) NSMutableArray *matchedCards;
+
+- (Deck *) createDeck;
+- (NSString *) cellReuseIdentifier;
+- (void)updateUI;
+- (void)updateCell:(UICollectionViewCell *)cell usingCard:(Card *)card atIndexPath:(NSIndexPath *)indexPath animate:(BOOL) animate;
+
 @end

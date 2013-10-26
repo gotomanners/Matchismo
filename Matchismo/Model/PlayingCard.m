@@ -27,40 +27,22 @@
 - (int) match:(NSArray *)otherCards {
     
     int score = 0;
-    int numOfMatches = 0;
-    int otherCardsCount = [otherCards count];
-    if (otherCardsCount > 0) {
-        for (int i = 0; i < otherCardsCount; i++) {
-            id otherCard1 = otherCards[i];
-            if ([otherCard1 isKindOfClass:[PlayingCard class]]) {
-                PlayingCard *card1 = (PlayingCard *)otherCard1;
-                
-                for (int j = i+1; j < otherCardsCount; j++) {
-                    id otherCard2 =otherCards[j];
-                    if ([otherCard2 isKindOfClass:[PlayingCard class]])
-                    {
-                        PlayingCard *card2 = (PlayingCard *)otherCard2;
-                        
-                        // check for the same suit
-                        if ([card1.suit isEqualToString:card2.suit]) {
-                            score += 1;
-                            numOfMatches++;
-                        }
-                        // check for the same rank
-                        if (card1.rank == card2.rank) {
-                            score += 4;
-                            numOfMatches++;
-                        }
-                    }
+    if ([otherCards count]) {
+        for (id otherCard in otherCards) {
+            if ([otherCard isKindOfClass:[PlayingCard class]]) {
+                PlayingCard *otherPlayingCard = (PlayingCard *)otherCard;
+                if ([otherPlayingCard.suit isEqualToString:self.suit]) {
+                    score += 1;
+                } else if (otherPlayingCard.rank == self.rank) {
+                    score += 4;
+                } else {
+                    score = 0;
+                    break;
                 }
             }
         }
-        
-        if (numOfMatches < [otherCards count] -1) {
-            score = 0;
-        }
-        
     }
+    
     return score;
 }
 

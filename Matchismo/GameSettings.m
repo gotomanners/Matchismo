@@ -14,6 +14,7 @@
 #define MATCHBONUS_KEY @"MatchBonus_Key"
 #define MISMATCHPENALTY_KEY @"MismatchPenalty_Key"
 #define FLIPCOST_KEY @"Flipcost_Key"
+#define NUMBER_OF_CARDS_TO_DEAL_CARD_MATCHING_GAME_KEY @"NumberOfCardsToDealInCardMatchingGame_Key"
 
 - (int)getIntForKey:(NSString *)key withDefaultInt:(int)defaultValue {
     NSDictionary *settings = [[NSUserDefaults standardUserDefaults] dictionaryForKey:GAME_SETTINGS_KEY];
@@ -36,6 +37,10 @@
 
 - (int)flipCost {
     return [self getIntForKey:FLIPCOST_KEY withDefaultInt:1];
+}
+
+- (int)numberOfCardsToDealInCardMatchingGame {
+    return [self getIntForKey:NUMBER_OF_CARDS_TO_DEAL_CARD_MATCHING_GAME_KEY withDefaultInt:22];
 }
 
 - (void)setInt:(int)value forKey:(NSString *)key {
@@ -63,6 +68,12 @@
 - (void)setFlipCost:(int)flipCost {
     if (flipCost != self.flipCost) {
         [self setInt:flipCost forKey:FLIPCOST_KEY];
+    }
+}
+
+- (void)setNumberOfCardsToDealInCardMatchingGame:(int)numberOfCardsToDealInCardMatchingGame {
+    if (numberOfCardsToDealInCardMatchingGame != self.numberOfCardsToDealInCardMatchingGame) {
+        [self setInt:numberOfCardsToDealInCardMatchingGame forKey:NUMBER_OF_CARDS_TO_DEAL_CARD_MATCHING_GAME_KEY];
     }
 }
 

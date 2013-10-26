@@ -10,6 +10,7 @@
 #import "Card.h"
 
 @interface Deck : NSObject
+@property (nonatomic) int numberOfCardsInDeck;
 
 - (void)addCard:(Card *)card atTop:(BOOL)atTop;
 

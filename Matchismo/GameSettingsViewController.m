@@ -40,9 +40,12 @@
     self.matchBonusSlider.value = self.gameSettings.matchBonus;
     self.mismatchPenaltySlider.value = self.gameSettings.mismatchPenalty;
     self.flipCostSlider.value = self.gameSettings.flipCost;
+    self.numberOfCardsToDealInCardMatchingGameSlider.value = self.gameSettings.numberOfCardsToDealInCardMatchingGame;
+    
     [self setLabel:self.matchBonusLabel forSlider:self.matchBonusSlider];
     [self setLabel:self.mismatchPenaltyLabel forSlider:self.mismatchPenaltySlider];
     [self setLabel:self.flipCostLabel forSlider:self.flipCostSlider];
+    [self setLabel:self.numberOfCardsToDealInCardMatchingGameLabel forSlider:self.numberOfCardsToDealInCardMatchingGameSlider];
 }
 
 
@@ -75,4 +78,8 @@
     self.gameSettings.flipCost = floor(sender.value);
 }
 
+- (IBAction)numberOfCardsToDealInCardMatchingGameSliderChanged:(UISlider *)sender {
+    [self setLabel:self.numberOfCardsToDealInCardMatchingGameLabel forSlider:sender];
+    self.gameSettings.numberOfCardsToDealInCardMatchingGame = floor(sender.value);
+}
 @end

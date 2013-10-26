@@ -9,6 +9,7 @@
 #import "SetGameViewController.h"
 #import "SetCardDeck.h"
 #import "SetCard.h"
+#import "SetCardCollectionViewCell.h"
 
 @implementation SetGameViewController
 @synthesize game = _game;
@@ -16,8 +17,8 @@
 
 - (CardMatchingGame *)game {
     if (!_game) {
-        _game = [[CardMatchingGame alloc] initWithCardCount:[self.cardButtons count]
-                                                  usingDeck:[[SetCardDeck alloc] init]];
+        _game = [[CardMatchingGame alloc] initWithCardCount:self.startingCardCount
+                                                  usingDeck:[self createDeck]];
         
         _game.matchBonus = self.gameSettings.matchBonus;
         _game.mismatchPenalty = self.gameSettings.mismatchPenalty;
@@ -33,6 +34,34 @@
     if (!_gameResult) _gameResult = [[GameResult alloc] init];
     _gameResult.gameType = @"Set Game";
     return _gameResult;
+}
+
+- (Deck *) createDeck {
+    return [[SetCardDeck alloc] init];
+}
+
+- (NSString *) cellReuseIdentifier {
+    return @"SetCard";
+}
+
+- (NSUInteger) startingCardCount {
+    return 12;
+}
+
+- (BOOL)removeUnplayableCards {
+    return YES;
+}
+
+#define NUMBER_OF_EXTRA_CARDS 3
+- (IBAction)dealExtraCards:(UIButton *)sender {
+    if (self.game.deckIsEmpty) {
+        sender.enabled = NO;
+        sender.alpha = 0.5;
+    } else {
+        [self.game drawExtraCards:NUMBER_OF_EXTRA_CARDS];
+        [self.cardCollectionView reloadData];
+        [self.cardCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.game.numberOfCardsInGame-1 inSection:0] atScrollPosition:UICollectionViewScrollPositionBottom animated:YES];
+    }
 }
 
 - (NSAttributedString *)updateAttributedString:(NSAttributedString *)attributedString withAttributesOfCard:(SetCard *)card {
@@ -79,32 +108,50 @@
 }
 
 - (void)updateUI {
+    [super updateUI];
     NSAttributedString *lastFlip = [[NSAttributedString alloc] initWithString:
-                                           self.game.matchStatus ? self.game.matchStatus : @""];
-    for (UIButton *cardButton in self.cardButtons) {
-        Card *card = [self.game cardAtIndex:[self.cardButtons indexOfObject:cardButton]];
-        NSAttributedString *title = [[NSAttributedString alloc] initWithString:card.contents];
-        if ([card isKindOfClass:[SetCard class]]) {
-            SetCard *setCard = (SetCard *) card;
-            title = [self updateAttributedString:title withAttributesOfCard:setCard];
-            lastFlip = [self updateAttributedString:lastFlip
-                               withAttributesOfCard:setCard];
-            lastFlip = [self updateAttributedString:lastFlip withFontSize:11.0f];
-            [cardButton setAttributedTitle:title forState:UIControlStateNormal];
-            cardButton.selected = setCard.isFaceUp;
-            cardButton.enabled = !setCard.isUnplayable;
-            cardButton.alpha = (setCard.isUnplayable ? 0.3 : 1.0);
-            if (setCard.isFaceUp) {
-                [cardButton setBackgroundColor:[UIColor colorWithWhite:0.9 alpha:1.0]];
-            } else {
-                [cardButton setBackgroundColor:[UIColor clearColor]];
-            }
+                                    self.game.matchStatus ? self.game.matchStatus : @""];
 
+    self.gameStatusLabel.attributedText = lastFlip;
+    self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
+}
+
+- (void) updateCell:(UICollectionViewCell *)cell usingCard:(Card *)card atIndexPath:(NSIndexPath *)indexPath animate:(BOOL) animate {
+    if ([cell isKindOfClass:[SetCardCollectionViewCell class]] && [card isKindOfClass:[SetCard class]]) {
+        SetCardView *setCardView = ((SetCardCollectionViewCell *)cell).setCardView;
+        SetCard *setCard = (SetCard *)card;
+        setCardView.number = setCard.number;
+        setCardView.color = setCard.color;
+        setCardView.shading = setCard.shading;
+        setCardView.symbol = setCard.symbol;
+        setCardView.unplayable = setCard.isUnplayable;
+        
+        setCardView.alpha = setCard.isUnplayable && !indexPath.section ? 0.3 : 1.0;
+        
+        if ((setCard.isFaceUp || setCardView.faceUp) && animate) {
+            [UIView transitionWithView:setCardView duration:0.5 options:UIViewAnimationOptionTransitionFlipFromLeft animations:^{
+                setCardView.faceUp = !indexPath.section ? setCard.isFaceUp : NO;
+            } completion:NULL];
+            
+        } else {
+            setCardView.faceUp = !indexPath.section ? setCard.isFaceUp : NO;
         }
     }
-    
-    [super updateUI];
-    self.gameStatusLabel.attributedText = lastFlip;
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView
+                  layout:(UICollectionViewLayout*)collectionViewLayout
+  sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 2) return CGSizeMake(40, 40);
+    if (indexPath.section == 1) return CGSizeMake(150, 20);
+    return CGSizeMake(90, 70);
+}
+
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView
+                        layout:(UICollectionViewLayout*)collectionViewLayout
+        insetForSectionAtIndex:(NSInteger)section {
+    if (section == 1) return UIEdgeInsetsMake(10, 10, 0, 0);
+    return UIEdgeInsetsMake(10, 10, 10, 10);
 }
 
 @end

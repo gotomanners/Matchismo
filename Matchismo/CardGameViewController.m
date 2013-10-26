@@ -8,6 +8,9 @@
 
 #import "CardGameViewController.h"
 #import "PlayingCardDeck.h"
+#import "PlayingCard.h"
+#import "PlayingCardCollectionViewCell.h"
+#import "PlayingCardView.h"
 
 @interface CardGameViewController ()
 
@@ -20,8 +23,8 @@
 
 - (CardMatchingGame *)game {
     if(!_game) {
-        _game = [[CardMatchingGame alloc] initWithCardCount:[self.cardButtons count]
-                                                  usingDeck:[[PlayingCardDeck alloc] init]];
+        _game = [[CardMatchingGame alloc] initWithCardCount:self.startingCardCount
+                                                  usingDeck:[self createDeck]];
         _game.matchBonus = self.gameSettings.matchBonus;
         _game.mismatchPenalty = self.gameSettings.mismatchPenalty;
         _game.flipCost = self.gameSettings.flipCost;
@@ -38,24 +41,57 @@
     return _gameResult;
 }
 
+- (Deck *) createDeck {
+    return [[PlayingCardDeck alloc] init];
+}
+
+- (NSUInteger) startingCardCount {
+    return self.gameSettings.numberOfCardsToDealInCardMatchingGame;
+}
+
+- (NSString *) cellReuseIdentifier {
+    return @"PlayingCard";
+}
+
 - (void)updateUI {
-    UIImage *cardBackImage = [UIImage imageNamed:@"cardBack.png"];
-    for (UIButton *cardButton in self.cardButtons) {
-        Card *card = [self.game cardAtIndex:[self.cardButtons indexOfObject:cardButton]];
-        [cardButton setTitle:card.contents forState:UIControlStateSelected];
-        [cardButton setTitle:card.contents forState:UIControlStateSelected|UIControlStateDisabled];
-        cardButton.selected = card.isFaceUp;
-        cardButton.enabled = !card.isUnplayable;
-        cardButton.alpha = card.isUnplayable ? 0.3 : 1.0;
-        if (cardButton.selected) {
-            [cardButton setImage:nil forState:UIControlStateNormal];
-        } else {
-            [cardButton setImage:cardBackImage forState:UIControlStateNormal];
-        }
-        
-    }
-    
     [super updateUI];
+    self.gameStatusLabel.text = self.game.matchStatus;
+    self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
+}
+
+- (void) updateCell:(UICollectionViewCell *)cell usingCard:(Card *)card atIndexPath:(NSIndexPath *)indexPath animate:(BOOL) animate {
+    if ([cell isKindOfClass:[PlayingCardCollectionViewCell class]] && [card isKindOfClass:[PlayingCard class]]) {
+        PlayingCardView *playingCardView = ((PlayingCardCollectionViewCell *)cell).playingCardView;
+        PlayingCard *playingCard = (PlayingCard *)card;
+        playingCardView.rank = playingCard.rank;
+        playingCardView.suit = playingCard.suit;
+        playingCardView.unplayable = playingCard.isUnplayable;
+        
+        playingCardView.alpha = playingCard.isUnplayable && !indexPath.section ? 0.3 : 1.0;
+        
+        if (!playingCardView.unplayable && (playingCard.isFaceUp || playingCardView.faceUp) && animate) {
+            [UIView transitionWithView:playingCardView duration:0.5 options:UIViewAnimationOptionTransitionFlipFromLeft animations:^{
+                playingCardView.faceUp = !indexPath.section ? playingCard.isFaceUp : YES;
+            } completion:NULL];
+        } else {
+            playingCardView.faceUp = !indexPath.section ? playingCard.isFaceUp : YES;
+        }
+    }
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView
+                  layout:(UICollectionViewLayout*)collectionViewLayout
+  sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 2) return CGSizeMake(56, 72);
+    if (indexPath.section == 1) return CGSizeMake(150, 20);
+    return CGSizeMake(70, 100);
+}
+
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView
+                        layout:(UICollectionViewLayout*)collectionViewLayout
+        insetForSectionAtIndex:(NSInteger)section {
+    if (section == 1) return UIEdgeInsetsMake(10, 10, 0, 0);
+    return UIEdgeInsetsMake(0, 0, 0, 0);
 }
 
 @end

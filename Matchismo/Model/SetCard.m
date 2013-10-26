@@ -82,19 +82,21 @@
         for (id otherCard in otherCards) {
             if ([otherCard isKindOfClass:[SetCard class]]) {
                 SetCard *otherSetCard = (SetCard *)otherCard;
-                if (![colors containsObject:otherSetCard.color])
-                    [colors addObject:otherSetCard.color];
-                if (![symbols containsObject:otherSetCard.symbol])
-                    [symbols addObject:otherSetCard.symbol];
-                if (![shadings containsObject:otherSetCard.shading])
-                    [shadings addObject:otherSetCard.shading];
-                if (![numbers containsObject:@(otherSetCard.number)])
-                    [numbers addObject:@(otherSetCard.number)];
-                if (([colors count] == 1 || [colors count] == NUMBER_OF_MATCHING_CARDS)
-                    && ([symbols count] == 1 || [symbols count] == NUMBER_OF_MATCHING_CARDS)
-                    && ([shadings count] == 1 || [shadings count] == NUMBER_OF_MATCHING_CARDS)
-                    && ([numbers count] == 1 || [numbers count] == NUMBER_OF_MATCHING_CARDS)) {
-                    score = 4;
+                if (![otherSetCard.contents isEqualToString:self.contents]) {
+                    if (![colors containsObject:otherSetCard.color])
+                        [colors addObject:otherSetCard.color];
+                    if (![symbols containsObject:otherSetCard.symbol])
+                        [symbols addObject:otherSetCard.symbol];
+                    if (![shadings containsObject:otherSetCard.shading])
+                        [shadings addObject:otherSetCard.shading];
+                    if (![numbers containsObject:@(otherSetCard.number)])
+                        [numbers addObject:@(otherSetCard.number)];
+                    if (([colors count] == 1 || [colors count] == NUMBER_OF_MATCHING_CARDS)
+                        && ([symbols count] == 1 || [symbols count] == NUMBER_OF_MATCHING_CARDS)
+                        && ([shadings count] == 1 || [shadings count] == NUMBER_OF_MATCHING_CARDS)
+                        && ([numbers count] == 1 || [numbers count] == NUMBER_OF_MATCHING_CARDS)) {
+                        score = 4;
+                    }
                 }
             }
         }
